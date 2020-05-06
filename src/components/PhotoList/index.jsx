@@ -68,7 +68,7 @@ const PhotoList = (props) => {
             {open &&
             <div className="modal">
                 <div className="modal-body">
-                    <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%'}} alt=""/>
+                    <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
                     <p>{albumPhotos[selectPhoto].title}</p>
                     <div className="modal-footer">
                         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">

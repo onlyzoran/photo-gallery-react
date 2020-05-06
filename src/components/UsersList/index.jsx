@@ -21,7 +21,7 @@ const UsersList = () => {
     const usersElements = users.map(user => {
         const albumsCount = albums.filter(album => album.userId === user.id).length;
         return (
-            <UserItem id={user.id} name={user.name} username={user.username} albumsCount={albumsCount}/>
+            <UserItem key={user.id} id={user.id} name={user.name} username={user.username} albumsCount={albumsCount}/>
         )
     });
 
