@@ -9,6 +9,8 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ClearIcon from '@material-ui/icons/Clear';
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const PhotoList = (props) => {
     const albumId = parseInt(props.match.params.albumId, 10);
@@ -18,11 +20,16 @@ const PhotoList = (props) => {
     const [open, setOpen] = useState(false);
     const [selectPhoto, setSelectPhoto] = useState(0);
 
+    const [loadingAlbums, setLoadingAlbums] = useState(true);
+    const [loadingPhotos, setLoadingPhotos] = useState(true);
+    const [loadingModalPhotos, setLoadingModalPhotos] = useState(false);
+
     useEffect(() => {
         fetch('https://jsonplaceholder.typicode.com/photos')
             .then(response => response.json())
             .then(photos => {
                 setPhotos(photos);
+                setLoadingPhotos(false);
             })
     }, []);
 
@@ -31,6 +38,7 @@ const PhotoList = (props) => {
             .then(response => response.json())
             .then(albums => {
                 setAlbums(albums);
+                setLoadingAlbums(false);
             })
     }, []);
 
@@ -42,12 +50,23 @@ const PhotoList = (props) => {
 
     const albumPhotos = photos.filter(photo => photo.albumId === albumId);
 
+    const changeSelectPhoto = (changer) => {
+        setLoadingModalPhotos(true);
+        setSelectPhoto(selectPhoto + changer);
+        const img = new Image();
+        img.src = albumPhotos[selectPhoto].url;
+        img.onload = () => {
+            setLoadingModalPhotos(false);
+        }
+    }
+
     return (
         <>
             <NavLink to={`/albums/${userId}`}>
                 <Button variant="contained" startIcon={<ArrowBackIcon/>} style={{marginTop: '10px'}}>Albums</Button>
             </NavLink>
             <h1>Photos</h1>
+            {(loadingAlbums || loadingPhotos) && <CircularProgress />}
             <GridList cellHeight={180}>
                 {albumPhotos.map((photo, index) => (
                     <GridListTile
@@ -68,21 +87,24 @@ const PhotoList = (props) => {
             {open &&
             <div className="modal">
                 <div className="modal-body">
-                    <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
+                    {loadingModalPhotos
+                        ? <Skeleton variant="rect" style={{height: '100%', width: '100%'}} />
+                        : <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
+                    }
                     <p>{albumPhotos[selectPhoto].title}</p>
                     <div className="modal-footer">
                         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
                             <Button
                                 startIcon={<ArrowBackIosIcon/>}
                                 disabled={selectPhoto < 1}
-                                onClick={() => setSelectPhoto(selectPhoto - 1)}
+                                onClick={() => changeSelectPhoto( -1)}
                             >
                                 Prev
                             </Button>
                             <Button
                                 endIcon={<ArrowForwardIosIcon/>}
                                 disabled={selectPhoto >= (albumPhotos.length - 1)}
-                                onClick={() => setSelectPhoto(selectPhoto + 1)}
+                                onClick={() => changeSelectPhoto(1)}
                             >
                                 Next
                             </Button>

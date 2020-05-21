@@ -1,20 +1,26 @@
 import React, {useState, useEffect} from "react";
 import UserItem from "../UserItem";
 import {fetching} from '../../functions/fetching';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
     const [albums, setAlbums] = useState([]);
 
+    const [loadingUsers, setLoadingUsers] = useState(true);
+    const [loadingAlbums, setLoadingAlbums] = useState(true);
+
     useEffect(() => {
         fetching('users').then(users => {
             setUsers(users);
+            setLoadingUsers(false);
         })
     }, []);
 
     useEffect(() => {
         fetching('albums').then(albums => {
             setAlbums(albums);
+            setLoadingAlbums(false);
         })
     }, []);
 
@@ -29,6 +35,7 @@ const UsersList = () => {
         <>
             <h1>Users</h1>
             {usersElements}
+            {(loadingUsers || loadingAlbums) && <CircularProgress />}
         </>
     );
 }

@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {NavLink} from "react-router-dom";
 import {fetching} from '../../functions/fetching';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const AlbumsList = (props) => {
     const userId = parseInt(props.match.params.userId, 10);
@@ -12,15 +13,20 @@ const AlbumsList = (props) => {
     const [albums, setAlbums] = useState([]);
     const [photos, setPhotos] = useState([]);
 
+    const [loadingAlbums, setLoadingAlbums] = useState(true);
+    const [loadingPhotos, setLoadingPhotos] = useState(true);
+
     useEffect(() => {
         fetching('photos').then(photos => {
             setPhotos(photos);
+            setLoadingPhotos(false);
         })
     }, []);
 
     useEffect(() => {
         fetching('albums').then(albums => {
             setAlbums(albums);
+            setLoadingAlbums(false);
         })
     }, []);
 
@@ -34,8 +40,12 @@ const AlbumsList = (props) => {
 
         return (
             <Grid key={album.id} item xs={12} sm={4}>
-                <AlbumItem id={album.id} title={album.title} background={cardBackground}
-                           photosCount={albumPhotos.length}/>
+                <AlbumItem
+                    id={album.id}
+                    title={album.title}
+                    background={cardBackground}
+                    photosCount={albumPhotos.length}
+                />
             </Grid>
         )
     });
@@ -46,6 +56,7 @@ const AlbumsList = (props) => {
                 <Button variant="contained" startIcon={<ArrowBackIcon/>} style={{marginTop: '10px'}}>Users</Button>
             </NavLink>
             <h1>Albums</h1>
+            {(loadingAlbums || loadingPhotos) && <CircularProgress />}
             <Grid container spacing={3}>
                 {albumsElements}
             </Grid>
