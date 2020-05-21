@@ -22,13 +22,13 @@ const AlbumsList = (props) => {
     }, []);
 
     useEffect(() => {
-        fetching('albums').then(albums => {
+        fetching(`users/${userId}/albums`).then(albums => {
             setAlbums(albums);
             setLoadingAlbums(false);
         })
-    }, []);
+    }, [userId]);
 
-    const albumsElements = albums.filter(album => album.userId === userId).map(album => {
+    const albumsElements = albums.map(album => {
         const albumPhotos = photos.filter(photo => photo.albumId === album.id);
         let cardBackground = albumPhotos[0];
 

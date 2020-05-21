@@ -24,18 +24,18 @@ const PhotoList = (props) => {
     const [loadingPhotos, setLoadingPhotos] = useState(true);
 
     useEffect(() => {
-        fetching('photos').then(photos => {
+        fetching(`albums/${albumId}/photos`).then(photos => {
             setPhotos(photos);
             setLoadingPhotos(false);
         })
-    }, []);
+    }, [albumId]);
 
     useEffect(() => {
-        fetching('albums').then(albums => {
+        fetching(`albums/${albumId}`).then(albums => {
             setAlbums(albums);
             setLoadingAlbums(false);
         })
-    }, []);
+    }, [albumId]);
 
     let userId = albums[albumId - 1];
 
@@ -43,11 +43,25 @@ const PhotoList = (props) => {
         userId = albums[albumId - 1].userId;
     }
 
-    const albumPhotos = photos.filter(photo => photo.albumId === albumId);
-
     const changeSelectPhoto = (changer) => {
         setSelectPhoto(selectPhoto + changer);
     }
+
+    const photosElements = photos.map((photo, index) => (
+        <GridListTile
+            key={photo.id}
+            style={{boxSizing: 'content-box', width: '150px', height: '150px', cursor: 'pointer'}}
+            onClick={() => {
+                setOpen(true);
+                setSelectPhoto(index);
+            }}
+        >
+            <img src={photo.thumbnailUrl} alt={photo.title}/>
+            <GridListTileBar
+                title={photo.title}
+            />
+        </GridListTile>
+    ))
 
     return (
         <>
@@ -55,29 +69,17 @@ const PhotoList = (props) => {
                 <Button variant="contained" startIcon={<ArrowBackIcon/>} style={{marginTop: '10px'}}>Albums</Button>
             </NavLink>
             <h1>Photos</h1>
-            {(loadingAlbums || loadingPhotos) && <CircularProgress />}
-            <GridList cellHeight={180}>
-                {albumPhotos.map((photo, index) => (
-                    <GridListTile
-                        key={photo.id}
-                        style={{boxSizing: 'content-box', width: '150px', height: '150px', cursor: 'pointer'}}
-                        onClick={() => {
-                            setOpen(true);
-                            setSelectPhoto(index);
-                        }}
-                    >
-                        <img src={photo.thumbnailUrl} alt={photo.title}/>
-                        <GridListTileBar
-                            title={photo.title}
-                        />
-                    </GridListTile>
-                ))}
-            </GridList>
+            {(loadingAlbums || loadingPhotos)
+                ? <CircularProgress/>
+                : <GridList cellHeight={180}>
+                    {photosElements}
+                </GridList>
+            }
             {open &&
             <div className="modal">
                 <div className="modal-body">
-                    <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
-                    <p>{albumPhotos[selectPhoto].title}</p>
+                    <img src={photos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
+                    <p>{photos[selectPhoto].title}</p>
                     <div className="modal-footer">
                         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
                             <Button
@@ -89,7 +91,7 @@ const PhotoList = (props) => {
                             </Button>
                             <Button
                                 endIcon={<ArrowForwardIosIcon/>}
-                                disabled={selectPhoto >= (albumPhotos.length - 1)}
+                                disabled={selectPhoto >= (photos.length - 1)}
                                 onClick={() => changeSelectPhoto(1)}
                             >
                                 Next
