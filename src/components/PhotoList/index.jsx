@@ -16,7 +16,6 @@ const PhotoList = (props) => {
     const albumId = parseInt(props.match.params.albumId, 10);
 
     const [userId, setUserId] = useState(null);
-    const [albums, setAlbums] = useState([]);
     const [photos, setPhotos] = useState([]);
     const [open, setOpen] = useState(false);
     const [selectPhoto, setSelectPhoto] = useState(0);
@@ -33,7 +32,6 @@ const PhotoList = (props) => {
 
     useEffect(() => {
         fetching(`albums/${albumId}`).then(albums => {
-            setAlbums(albums);
             setLoadingAlbums(false);
             if (albums) {
                 setUserId(albums.userId);
