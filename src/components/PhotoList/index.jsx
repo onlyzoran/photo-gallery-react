@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect} from 'react';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
-import Button from "@material-ui/core/Button";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import {NavLink} from "react-router-dom";
+import Button from '@material-ui/core/Button';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {NavLink} from 'react-router-dom';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ClearIcon from '@material-ui/icons/Clear';
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Skeleton from '@material-ui/lab/Skeleton';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import {fetching} from '../../functions/fetching';
 
 const PhotoList = (props) => {
     const albumId = parseInt(props.match.params.albumId, 10);
@@ -22,24 +22,19 @@ const PhotoList = (props) => {
 
     const [loadingAlbums, setLoadingAlbums] = useState(true);
     const [loadingPhotos, setLoadingPhotos] = useState(true);
-    const [loadingModalPhotos, setLoadingModalPhotos] = useState(false);
 
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/photos')
-            .then(response => response.json())
-            .then(photos => {
-                setPhotos(photos);
-                setLoadingPhotos(false);
-            })
+        fetching('photos').then(photos => {
+            setPhotos(photos);
+            setLoadingPhotos(false);
+        })
     }, []);
 
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/albums')
-            .then(response => response.json())
-            .then(albums => {
-                setAlbums(albums);
-                setLoadingAlbums(false);
-            })
+        fetching('albums').then(albums => {
+            setAlbums(albums);
+            setLoadingAlbums(false);
+        })
     }, []);
 
     let userId = albums[albumId - 1];
@@ -51,13 +46,7 @@ const PhotoList = (props) => {
     const albumPhotos = photos.filter(photo => photo.albumId === albumId);
 
     const changeSelectPhoto = (changer) => {
-        setLoadingModalPhotos(true);
         setSelectPhoto(selectPhoto + changer);
-        const img = new Image();
-        img.src = albumPhotos[selectPhoto].url;
-        img.onload = () => {
-            setLoadingModalPhotos(false);
-        }
     }
 
     return (
@@ -87,10 +76,7 @@ const PhotoList = (props) => {
             {open &&
             <div className="modal">
                 <div className="modal-body">
-                    {loadingModalPhotos
-                        ? <Skeleton variant="rect" style={{height: '100%', width: '100%'}} />
-                        : <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
-                    }
+                    <img src={albumPhotos[selectPhoto].url} style={{maxWidth: '100%', maxHeight: '75vh'}} alt=""/>
                     <p>{albumPhotos[selectPhoto].title}</p>
                     <div className="modal-footer">
                         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">

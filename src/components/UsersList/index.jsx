@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
-import UserItem from "../UserItem";
+import React, {useState, useEffect} from 'react';
+import UserItem from '../UserItem';
 import {fetching} from '../../functions/fetching';
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);

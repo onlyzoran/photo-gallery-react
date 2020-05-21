@@ -1,7 +1,7 @@
 import React from 'react';
 import PhotoList from './components/PhotoList'
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
-import AlbumsList from "./components/AlbumsList";
+import AlbumsList from './components/AlbumsList';
 import Container from '@material-ui/core/Container';
 import UsersList from './components/UsersList';
 
