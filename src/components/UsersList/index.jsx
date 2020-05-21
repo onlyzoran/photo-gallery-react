@@ -34,8 +34,10 @@ const UsersList = () => {
     return (
         <>
             <h1>Users</h1>
-            {usersElements}
-            {(loadingUsers || loadingAlbums) && <CircularProgress />}
+            {(loadingUsers || loadingAlbums)
+                ? <CircularProgress />
+                : usersElements
+            }
         </>
     );
 }

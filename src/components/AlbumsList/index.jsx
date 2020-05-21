@@ -14,12 +14,10 @@ const AlbumsList = (props) => {
     const [photos, setPhotos] = useState([]);
 
     const [loadingAlbums, setLoadingAlbums] = useState(true);
-    const [loadingPhotos, setLoadingPhotos] = useState(true);
 
     useEffect(() => {
         fetching('photos').then(photos => {
             setPhotos(photos);
-            setLoadingPhotos(false);
         })
     }, []);
 
@@ -56,10 +54,12 @@ const AlbumsList = (props) => {
                 <Button variant="contained" startIcon={<ArrowBackIcon/>} style={{marginTop: '10px'}}>Users</Button>
             </NavLink>
             <h1>Albums</h1>
-            {(loadingAlbums || loadingPhotos) && <CircularProgress />}
-            <Grid container spacing={3}>
-                {albumsElements}
-            </Grid>
+            {loadingAlbums
+                ? <CircularProgress/>
+                : <Grid container spacing={3}>
+                    {albumsElements}
+                </Grid>
+            }
         </>
     );
 }
