@@ -15,6 +15,7 @@ import {fetching} from '../../functions/fetching';
 const PhotoList = (props) => {
     const albumId = parseInt(props.match.params.albumId, 10);
 
+    const [userId, setUserId] = useState(null);
     const [albums, setAlbums] = useState([]);
     const [photos, setPhotos] = useState([]);
     const [open, setOpen] = useState(false);
@@ -34,14 +35,11 @@ const PhotoList = (props) => {
         fetching(`albums/${albumId}`).then(albums => {
             setAlbums(albums);
             setLoadingAlbums(false);
+            if (albums) {
+                setUserId(albums.userId);
+            }
         })
     }, [albumId]);
-
-    let userId = albums[albumId - 1];
-
-    if (userId) {
-        userId = albums[albumId - 1].userId;
-    }
 
     const changeSelectPhoto = (changer) => {
         setSelectPhoto(selectPhoto + changer);
